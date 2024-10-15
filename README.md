@@ -21,7 +21,6 @@ While building this site, I focused on writing clean, modular, and reusable code
 
 ## 🎨 Key Features
 
-- **Draggable Audio Player**: The custom audio player allows users to drag and hide the player interface.
 - **Smooth Animations**: Interactive background particles, a rainbow animation effect for track names, and smooth sliding transitions enhance the overall user experience.
 - **Project Showcase**: It highlights the key projects I've worked on, showing the technologies used and project descriptions.
 - **Responsive Design**: Built to work seamlessly across desktop, tablet, and mobile devices.
