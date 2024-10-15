@@ -1,0 +1,112 @@
+/* Prevent scrollbars on the entire page */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+/* Profile picture styling */
+.profile-pic {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    transition: opacity 0.3s ease;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+/* Hover effect for profile picture */
+.profile-pic:hover {
+    opacity: 0.7;
+}
+
+/* Profile picture link to go back to the home page */
+.profile-pic-link {
+    text-decoration: none;
+}
+
+/* Projects container */
+.projects-container {
+    padding: 20px;
+    text-align: center;
+    background-color: #333;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* Style the header */
+.projects-header {
+    font-size: 2rem;
+    margin-bottom: 30px;
+    color: #f4a460;
+    font-family: 'Cattie', sans-serif;
+}
+
+/* Project card link styling */
+.project-card-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Grid layout for the project cards */
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Responsive grid */
+    gap: 20px;
+    justify-items: center;
+}
+
+/* Style for individual project cards */
+.project-card {
+    background-color: #f0c1a1;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    border: 2px solid #d89b72;
+    width: 100%;
+    max-width: 400px;
+}
+
+/* Hover effect for the project cards */
+.project-card:hover {
+    transform: scale(1.05);
+}
+
+/* Style for project titles */
+.project-title {
+    color: #4b2d1f;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    font-family: 'Cattie', sans-serif;
+}
+
+/* Style for project descriptions */
+.project-description {
+    color: #4b2d1f;
+    font-size: 1rem;
+    margin-bottom: 15px;
+    font-family: 'Cattie', sans-serif;
+}
+
+/* Tech stack styling */
+.tech-stack {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* Placeholder for tech icons */
+.tech-icon-placeholder {
+    background-color: #d89b72;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+}

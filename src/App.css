@@ -1,0 +1,150 @@
+/* Audio player container */
+.audio-player {
+  position: fixed;
+  bottom: 0;
+  right: 20px;
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 15px;
+  border-radius: 10px 10px 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #f0c1a1;
+}
+
+/* Controls inside the audio player */
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+/* Play/Stop button */
+.play-button {
+  background-color: transparent;
+  color: #f0c1a1;
+  border: none;
+  cursor: pointer;
+  font-family: 'Cattie', sans-serif;
+  font-size: 2rem;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.play-button:hover {
+  color: #d89b72;
+}
+
+/* Volume slider */
+.volume-slider {
+  width: 150px;
+  cursor: pointer;
+}
+
+.volume-slider::-webkit-slider-thumb {
+  background-color: #4b2d1f;
+  border-radius: 50%;
+  width: 15px;
+  height: 15px;
+}
+
+.volume-slider::-moz-range-thumb {
+  background-color: #4b2d1f;
+  border-radius: 50%;
+  width: 15px;
+  height: 15px;
+}
+
+/* Rainbow animation for track name */
+@keyframes rainbow {
+  0% { color: #ff004d; }
+  20% { color: #ff77a8; }
+  40% { color: #ffcc00; }
+  60% { color: #00e756; }
+  80% { color: #29adff; }
+  100% { color: #ff004d; }
+}
+
+.rainbow-text {
+  animation: rainbow 10s infinite;
+}
+
+/* Currently Playing text */
+.currently-playing {
+  font-family: 'Cattie', sans-serif;
+  font-size: 1rem;
+  text-align: center;
+}
+
+/* Copyright Footer */
+.copyright-footer {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  font-family: 'Cattie', sans-serif;
+  font-size: 0.9rem;
+  color: #f0c1a1;     /* You can change the color to match your theme */
+}
+
+/* Canvas for particles background */
+#particle-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+/* Cursor trail effect */
+.cursor-trail {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: #f4a460;
+  pointer-events: none;
+  animation: trail 0.5s ease-out forwards;
+  z-index: 9999;
+}
+
+@keyframes trail {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+}
+
+/* Ensure no overflow on html and body */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Ensure the App component doesn't cause overflow */
+.App {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #333;
+  gap: 5px;
+  position: relative;
+}

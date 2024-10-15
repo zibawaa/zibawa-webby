@@ -1,0 +1,52 @@
+.buttons-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease, pointer-events 0.5s ease;
+    position: absolute;
+    bottom: 40px;
+    overflow: hidden;
+}
+
+.fade-in {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.fade-out {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.button {
+    background-color: #f0c1a1;
+    color: #4b2d1f;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-family: 'Cattie', sans-serif;
+    border-radius: 20px 20px 40px 40px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    text-decoration: none;
+}
+
+.button:hover {
+    background-color: #d89b72;
+    transform: scale(1.05);
+
+}
+
+.button:before {
+    content: '🐾';
+    margin-right: 10px;
+
+}
+
+.button:focus {
+    outline: none;
+
+}
