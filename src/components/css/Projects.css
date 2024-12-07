@@ -15,11 +15,22 @@ html, body {
     transition: opacity 0.3s ease;
     cursor: pointer;
     margin-bottom: 20px;
+    animation: fadeIn 1s ease-in-out; /* Apply fade-in on load */
 }
-
 /* Hover effect for profile picture */
 .profile-pic:hover {
     opacity: 0.7;
+}
+/* Add fade-in keyframes */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px); /* slight upward motion */
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0); /* position restored */
+    }
 }
 
 /* Profile picture link to go back to the home page */
@@ -38,6 +49,9 @@ html, body {
     justify-content: center;
     align-items: center;
     overflow: hidden;
+    animation: fadeIn 1.5s ease-in-out; /* Apply fade-in to cards */
+    opacity: 0;
+    animation-fill-mode: forwards; /* Ensure the opacity sticks after animation */
 }
 
 /* Style the header */
@@ -47,7 +61,13 @@ html, body {
     color: #f4a460;
     font-family: 'Cattie', sans-serif;
 }
+.project-card:nth-child(1) {
+    animation-delay: 0.5s; /* Delay for first card */
+}
 
+.project-card:nth-child(2) {
+    animation-delay: 1s; /* Delay for second card */
+}
 /* Project card link styling */
 .project-card-link {
     text-decoration: none;

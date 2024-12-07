@@ -14,7 +14,7 @@ const Projects = () => {
             <div className="projects-grid">
 
                 {/* First project: Portfolio website with clickable link to GitHub */}
-                <a href="https://github.com/your-github-repo-url" target="_blank" rel="noopener noreferrer" className="project-card-link">
+                <a href="https://github.com/zibawaa/zibawa-webby/tree/master" target="_blank" rel="noopener noreferrer" className="project-card-link">
                     <div className="project-card">
                         <h2 className="project-title">My Portfolio Website</h2>
                         <p className="project-description">

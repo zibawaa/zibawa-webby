@@ -10,6 +10,7 @@
   flex-direction: column;
   align-items: center;
   color: #f0c1a1;
+  animation: slideUp 0.5s ease-in-out;
 }
 
 /* Controls inside the audio player */
@@ -68,7 +69,15 @@
   80% { color: #29adff; }
   100% { color: #ff004d; }
 }
-
+/* Define slide-up keyframes */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
 .rainbow-text {
   animation: rainbow 10s infinite;
 }
