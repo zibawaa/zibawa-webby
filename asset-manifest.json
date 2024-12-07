@@ -1,0 +1,20 @@
+{
+  "files": {
+    "main.css": "/zibawa-webby/static/css/main.607d54c6.css",
+    "main.js": "/zibawa-webby/static/js/main.980da058.js",
+    "static/js/453.935479b0.chunk.js": "/zibawa-webby/static/js/453.935479b0.chunk.js",
+    "static/media/lofi-by-Chillpeach.mp3": "/zibawa-webby/static/media/lofi-by-Chillpeach.4e60d56bda1e5e26e77f.mp3",
+    "static/media/Cattie-Regular.ttf": "/zibawa-webby/static/media/Cattie-Regular.bac7ed87f9bcd95a6c55.ttf",
+    "static/media/cat_tail.gif": "/zibawa-webby/static/media/cat_tail.88badd818df24ced7545.gif",
+    "static/media/cat_ear1.png": "/zibawa-webby/static/media/cat_ear1.0fe00507aeba696f185f.png",
+    "static/media/cat_ear2.png": "/zibawa-webby/static/media/cat_ear2.10e08a8a36e988f979a4.png",
+    "index.html": "/zibawa-webby/index.html",
+    "main.607d54c6.css.map": "/zibawa-webby/static/css/main.607d54c6.css.map",
+    "main.980da058.js.map": "/zibawa-webby/static/js/main.980da058.js.map",
+    "453.935479b0.chunk.js.map": "/zibawa-webby/static/js/453.935479b0.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.607d54c6.css",
+    "static/js/main.980da058.js"
+  ]
+}
