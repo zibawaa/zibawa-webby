@@ -75,3 +75,45 @@ export function subscribeMessages(
     supabase.removeChannel(channel);
   };
 }
+
+/* ========================================================== */
+/*  STATUS  (Currently Working On — single row, id=1)         */
+/* ========================================================== */
+
+export interface StatusItem {
+  text: string;
+}
+
+/**
+ * Fetch the global "currently working on" items.
+ */
+export async function fetchStatus(): Promise<StatusItem[]> {
+  if (!supabase) return [];
+  const { data, error } = await supabase
+    .from("status")
+    .select("items")
+    .eq("id", 1)
+    .single();
+
+  if (error) {
+    console.error("fetchStatus error:", error);
+    return [];
+  }
+  return (data?.items ?? []) as StatusItem[];
+}
+
+/**
+ * Save the global "currently working on" items (upsert single row).
+ */
+export async function saveStatus(items: StatusItem[]): Promise<boolean> {
+  if (!supabase) return false;
+  const { error } = await supabase
+    .from("status")
+    .upsert({ id: 1, items, updated_at: new Date().toISOString() });
+
+  if (error) {
+    console.error("saveStatus error:", error);
+    return false;
+  }
+  return true;
+}

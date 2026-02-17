@@ -1,42 +1,29 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Zap } from "lucide-react";
+import { fetchStatus, type StatusItem } from "../lib/supabase";
 
-const STORAGE_KEY = "zibawa-current-status";
-
-interface StatusItem {
-  text: string;
-  updatedAt: string;
-}
-
-const defaultStatus: StatusItem[] = [
-  { text: "Building out this portfolio site with live chat", updatedAt: new Date().toISOString() },
-  { text: "Polishing Trackademic for public demo", updatedAt: new Date().toISOString() },
+const fallbackItems: StatusItem[] = [
+  { text: "Building out this portfolio site with live chat" },
+  { text: "Polishing Trackademic for public demo" },
 ];
 
-export function getCurrentStatus(): StatusItem[] {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) return JSON.parse(stored) as StatusItem[];
-  } catch {
-    /* ignore */
-  }
-  return defaultStatus;
-}
-
-export function setCurrentStatus(items: StatusItem[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-}
-
 export default function CurrentlyWorkingOn() {
-  const [items, setItems] = useState<StatusItem[]>([]);
+  const [items, setItems] = useState<StatusItem[]>(fallbackItems);
 
   useEffect(() => {
-    setItems(getCurrentStatus());
+    fetchStatus().then((data) => {
+      if (data.length > 0) setItems(data);
+    });
 
-    const handleStorage = () => setItems(getCurrentStatus());
-    window.addEventListener("status-updated", handleStorage);
-    return () => window.removeEventListener("status-updated", handleStorage);
+    const handleRefresh = () => {
+      fetchStatus().then((data) => {
+        if (data.length > 0) setItems(data);
+      });
+    };
+
+    window.addEventListener("status-updated", handleRefresh);
+    return () => window.removeEventListener("status-updated", handleRefresh);
   }, []);
 
   if (items.length === 0) return null;
