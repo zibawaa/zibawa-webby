@@ -48,4 +48,27 @@
   .container-page {
     @apply mx-auto max-w-5xl px-4 sm:px-6 lg:px-8;
   }
+
+  .chat-rainbow {
+    background: linear-gradient(
+      90deg,
+      #ff6b6b,
+      #ffa500,
+      #ffd93d,
+      #6bcb77,
+      #4d96ff,
+      #9b59b6,
+      #ff6b6b
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: rainbow-shift 3s linear infinite;
+  }
+}
+
+@keyframes rainbow-shift {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
 }
