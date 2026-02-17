@@ -20,23 +20,28 @@ const statusColors: Record<Project["status"], string> = {
 };
 
 export default function ProjectCard({ project }: { project: Project }) {
+  const href = project.liveUrl || project.githubUrl || "#";
+
   return (
-    <motion.article
+    <motion.a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.35 }}
       className="group flex flex-col overflow-hidden rounded-xl border border-neutral-200
-                 bg-white shadow-sm transition-shadow hover:shadow-md
+                 bg-white shadow-sm transition-all hover:shadow-md hover:-translate-y-1
                  dark:border-neutral-800 dark:bg-neutral-900"
     >
-      {/* Image placeholder */}
-      <div className="flex h-40 items-center justify-center bg-neutral-100 dark:bg-neutral-800">
+      {/* Image */}
+      <div className="flex h-40 items-center justify-center overflow-hidden bg-neutral-100 dark:bg-neutral-800">
         {project.image ? (
           <img
             src={project.image}
             alt={project.title}
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
           <ImageIcon size={32} className="text-neutral-300 dark:text-neutral-600" />
@@ -45,7 +50,7 @@ export default function ProjectCard({ project }: { project: Project }) {
 
       <div className="flex flex-1 flex-col gap-3 p-5">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">
+          <h3 className="text-base font-semibold text-neutral-900 group-hover:text-primary-600 dark:text-neutral-100 dark:group-hover:text-primary-400 transition-colors">
             {project.title}
           </h3>
           <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${statusColors[project.status]}`}>
@@ -70,32 +75,22 @@ export default function ProjectCard({ project }: { project: Project }) {
           ))}
         </div>
 
-        {/* Links */}
+        {/* Link label */}
         <div className="flex gap-3 pt-1">
           {project.githubUrl && (
-            <a
-              href={project.githubUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-neutral-500
-                         hover:text-primary-600 dark:text-neutral-400 dark:hover:text-primary-400"
-            >
+            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-neutral-500
+                       group-hover:text-primary-600 dark:text-neutral-400 dark:group-hover:text-primary-400 transition-colors">
               <Github size={14} /> Code
-            </a>
+            </span>
           )}
           {project.liveUrl && (
-            <a
-              href={project.liveUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-neutral-500
-                         hover:text-primary-600 dark:text-neutral-400 dark:hover:text-primary-400"
-            >
+            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-neutral-500
+                       group-hover:text-primary-600 dark:text-neutral-400 dark:group-hover:text-primary-400 transition-colors">
               <ExternalLink size={14} /> Live
-            </a>
+            </span>
           )}
         </div>
       </div>
-    </motion.article>
+    </motion.a>
   );
 }
