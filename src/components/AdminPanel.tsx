@@ -1,15 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Lock, LogOut, Plus, Trash2, Save } from "lucide-react";
-import { getCurrentStatus, setCurrentStatus } from "./CurrentlyWorkingOn";
+import { Lock, LogOut, Plus, Trash2, Save, Loader2 } from "lucide-react";
+import { fetchStatus, saveStatus, supabase, type StatusItem } from "../lib/supabase";
 
 const ADMIN_KEY = "zibawa-admin-auth";
 const ADMIN_PASS = "zibawa2026";
-
-interface StatusItem {
-  text: string;
-  updatedAt: string;
-}
 
 export default function AdminPanel() {
   const [authed, setAuthed] = useState(false);
@@ -17,13 +12,14 @@ export default function AdminPanel() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [items, setItems] = useState<StatusItem[]>([]);
+  const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem(ADMIN_KEY);
     if (stored === "true") {
       setAuthed(true);
-      setItems(getCurrentStatus());
+      fetchStatus().then((data) => setItems(data));
     }
   }, []);
 
@@ -31,7 +27,7 @@ export default function AdminPanel() {
     if (password === ADMIN_PASS) {
       localStorage.setItem(ADMIN_KEY, "true");
       setAuthed(true);
-      setItems(getCurrentStatus());
+      fetchStatus().then((data) => setItems(data));
       setShowLogin(false);
       setPassword("");
       setError("");
@@ -46,17 +42,25 @@ export default function AdminPanel() {
     setItems([]);
   };
 
-  const handleSave = useCallback(() => {
+  const handleSave = useCallback(async () => {
     const clean = items.filter((i) => i.text.trim() !== "");
-    setCurrentStatus(clean);
-    setItems(clean);
-    window.dispatchEvent(new Event("status-updated"));
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    setSaving(true);
+    const ok = await saveStatus(clean);
+    setSaving(false);
+
+    if (ok) {
+      setItems(clean);
+      window.dispatchEvent(new Event("status-updated"));
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } else {
+      setError("Failed to save — check Supabase connection");
+      setTimeout(() => setError(""), 3000);
+    }
   }, [items]);
 
   const addItem = () => {
-    setItems((prev) => [...prev, { text: "", updatedAt: new Date().toISOString() }]);
+    setItems((prev) => [...prev, { text: "" }]);
   };
 
   const removeItem = (index: number) => {
@@ -64,8 +68,11 @@ export default function AdminPanel() {
   };
 
   const updateItem = (index: number, text: string) => {
-    setItems((prev) => prev.map((item, i) => (i === index ? { ...item, text, updatedAt: new Date().toISOString() } : item)));
+    setItems((prev) => prev.map((item, i) => (i === index ? { text } : item)));
   };
+
+  // Don't show admin panel if Supabase isn't configured
+  if (!supabase) return null;
 
   if (!authed) {
     return (
@@ -130,7 +137,10 @@ export default function AdminPanel() {
           </h3>
           <div className="flex items-center gap-2">
             {saved && (
-              <span className="text-xs font-medium text-green-600 dark:text-green-400">Saved!</span>
+              <span className="text-xs font-medium text-green-600 dark:text-green-400">Saved globally!</span>
+            )}
+            {error && (
+              <span className="text-xs font-medium text-red-500">{error}</span>
             )}
             <button
               onClick={handleLogout}
@@ -173,10 +183,12 @@ export default function AdminPanel() {
           </button>
           <button
             onClick={handleSave}
+            disabled={saving}
             className="inline-flex items-center gap-1 rounded-lg bg-primary-500 px-4 py-1.5
-                       text-xs font-medium text-white hover:bg-primary-600"
+                       text-xs font-medium text-white hover:bg-primary-600 disabled:opacity-50"
           >
-            <Save size={12} /> Save
+            {saving ? <Loader2 size={12} className="animate-spin" /> : <Save size={12} />}
+            {saving ? "Saving…" : "Save"}
           </button>
         </div>
       </div>
