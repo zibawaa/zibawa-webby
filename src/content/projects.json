@@ -1,0 +1,57 @@
+[
+  {
+    "id": "trackademic",
+    "title": "Trackademic",
+    "description": "Full-stack student deadline tracker with calendar views, progress tracking, and deadline management. Built with a React frontend and Express backend.",
+    "tags": ["React", "Express", "TypeScript", "PostgreSQL", "Prisma"],
+    "status": "completed",
+    "githubUrl": "https://github.com/zibawaa/Trackademic",
+    "liveUrl": "",
+    "image": "/zibawa-webby/screenshots/trackademic.png",
+    "featured": true
+  },
+  {
+    "id": "social-media-website",
+    "title": "Social Media Website",
+    "description": "A full-featured social media platform with user profiles, a post feed, likes, comments, and real-time interactions.",
+    "tags": ["JavaScript", "Node.js", "Express", "MongoDB"],
+    "status": "completed",
+    "githubUrl": "https://github.com/zibawaa/Social-Media-Website",
+    "liveUrl": "",
+    "image": "/zibawa-webby/screenshots/social-media.png",
+    "featured": true
+  },
+  {
+    "id": "gamewebsite",
+    "title": "Game Website",
+    "description": "A gaming catalog website featuring a browsable library of games with categories, ratings, search, and community features.",
+    "tags": ["JavaScript", "HTML", "CSS", "Node.js"],
+    "status": "completed",
+    "githubUrl": "https://github.com/zibawaa/gamewebsite",
+    "liveUrl": "",
+    "image": "/zibawa-webby/screenshots/gamewebsite.png",
+    "featured": true
+  },
+  {
+    "id": "video-renting-software",
+    "title": "Video Renting Software",
+    "description": "A video rental management system with a movie catalog, customer tracking, rental history, and availability status.",
+    "tags": ["Software Engineering", "Database", "CRUD"],
+    "status": "completed",
+    "githubUrl": "https://github.com/zibawaa/VideoRentingSoftware",
+    "liveUrl": "",
+    "image": "/zibawa-webby/screenshots/video-rental.png",
+    "featured": true
+  },
+  {
+    "id": "zibawa-webby",
+    "title": "Zibawa Webby",
+    "description": "This portfolio website — a fast static site with real-time global chat, dark/light mode, and an orange cat theme.",
+    "tags": ["React", "TypeScript", "Tailwind", "Supabase", "Vite"],
+    "status": "in-progress",
+    "githubUrl": "https://github.com/zibawaa/zibawa-webby",
+    "liveUrl": "",
+    "image": "",
+    "featured": false
+  }
+]
