@@ -1,0 +1,23 @@
+[
+  {
+    "id": "update-001",
+    "date": "2026-02-17",
+    "title": "Portfolio site v2 launch",
+    "body": "Redesigned the portfolio with an orange cat theme, added all projects with generated screenshots, and integrated admin status editing.",
+    "projectId": "zibawa-webby"
+  },
+  {
+    "id": "update-002",
+    "date": "2026-02-16",
+    "title": "Trackademic pushed to GitHub",
+    "body": "Finished the full-stack student deadline tracker with React, Express, TypeScript, PostgreSQL, and Prisma. Pushed the complete codebase.",
+    "projectId": "trackademic"
+  },
+  {
+    "id": "update-003",
+    "date": "2026-02-04",
+    "title": "Video Renting Software uploaded",
+    "body": "Published the video rental management system project to GitHub.",
+    "projectId": "video-renting-software"
+  }
+]
