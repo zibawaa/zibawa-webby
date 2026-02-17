@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Lock, LogOut, Plus, Trash2, Save } from "lucide-react";
 import { getCurrentStatus, setCurrentStatus } from "./CurrentlyWorkingOn";
 
@@ -67,52 +67,55 @@ export default function AdminPanel() {
     setItems((prev) => prev.map((item, i) => (i === index ? { ...item, text, updatedAt: new Date().toISOString() } : item)));
   };
 
-  if (!authed && !showLogin) {
+  if (!authed) {
     return (
       <div className="container-page pb-8">
-        <button
-          onClick={() => setShowLogin(true)}
-          className="inline-flex items-center gap-2 rounded-lg border border-neutral-200 bg-white px-3 py-1.5
-                     text-xs font-medium text-neutral-500 transition-colors hover:border-primary-300 hover:text-primary-600
-                     dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:hover:border-primary-600 dark:hover:text-primary-400"
-        >
-          <Lock size={12} /> Admin
-        </button>
-
-        <AnimatePresence>
-          {showLogin && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="mt-3 max-w-xs overflow-hidden"
-            >
-              <div className="flex gap-2">
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => { setPassword(e.target.value); setError(""); }}
-                  onKeyDown={(e) => e.key === "Enter" && handleLogin()}
-                  placeholder="Password"
-                  className="flex-1 rounded-lg border border-neutral-200 px-3 py-1.5 text-sm outline-none
-                             focus:border-primary-400 dark:border-neutral-700 dark:bg-neutral-900 dark:focus:border-primary-600"
-                />
-                <button
-                  onClick={handleLogin}
-                  className="rounded-lg bg-primary-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-primary-600"
-                >
-                  Login
-                </button>
-              </div>
-              {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {!showLogin ? (
+          <button
+            onClick={() => setShowLogin(true)}
+            className="inline-flex items-center gap-2 rounded-lg border border-neutral-200 bg-white px-3 py-1.5
+                       text-xs font-medium text-neutral-500 transition-colors hover:border-primary-300 hover:text-primary-600
+                       dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:hover:border-primary-600 dark:hover:text-primary-400"
+          >
+            <Lock size={12} /> Admin
+          </button>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="max-w-xs"
+          >
+            <div className="flex gap-2">
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => { setPassword(e.target.value); setError(""); }}
+                onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+                placeholder="Password"
+                autoFocus
+                className="flex-1 rounded-lg border border-neutral-200 px-3 py-1.5 text-sm outline-none
+                           focus:border-primary-400 dark:border-neutral-700 dark:bg-neutral-900 dark:focus:border-primary-600"
+              />
+              <button
+                onClick={handleLogin}
+                className="rounded-lg bg-primary-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-primary-600"
+              >
+                Login
+              </button>
+              <button
+                onClick={() => { setShowLogin(false); setPassword(""); setError(""); }}
+                className="rounded-lg border border-neutral-200 px-2 py-1.5 text-sm text-neutral-500 hover:text-neutral-700
+                           dark:border-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
+              >
+                Cancel
+              </button>
+            </div>
+            {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
+          </motion.div>
+        )}
       </div>
     );
   }
-
-  if (!authed) return null;
 
   return (
     <motion.div
