@@ -4,11 +4,25 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ErrorBoundary from "./components/ErrorBoundary";
 
-const Home = lazy(() => import("./pages/Home"));
-const Projects = lazy(() => import("./pages/Projects"));
-const About = lazy(() => import("./pages/About"));
+function lazyRetry(factory: () => Promise<{ default: React.ComponentType }>) {
+  return lazy(() =>
+    factory().catch(() => {
+      const hasReloaded = sessionStorage.getItem("chunk-reload");
+      if (!hasReloaded) {
+        sessionStorage.setItem("chunk-reload", "1");
+        window.location.reload();
+        return { default: () => null } as { default: React.ComponentType };
+      }
+      sessionStorage.removeItem("chunk-reload");
+      return factory();
+    }),
+  );
+}
 
-const ChatWidget = lazy(() => import("./components/ChatWidget"));
+const Home = lazyRetry(() => import("./pages/Home"));
+const Projects = lazyRetry(() => import("./pages/Projects"));
+const About = lazyRetry(() => import("./pages/About"));
+const ChatWidget = lazyRetry(() => import("./components/ChatWidget"));
 
 function PageLoader() {
   return (
