@@ -19,7 +19,6 @@ export default function ChatWidget() {
   const [lastSent, setLastSent] = useState(0);
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  /* --- Username resolution --- */
   useEffect(() => {
     const stored = getStoredUsername();
     if (stored) setUsername(stored);
@@ -31,7 +30,6 @@ export default function ChatWidget() {
     setUsername(final);
   };
 
-  /* --- Load messages & subscribe --- */
   useEffect(() => {
     if (!open || !username) return;
 
@@ -43,7 +41,11 @@ export default function ChatWidget() {
 
     const unsub = subscribeMessages((msg) => {
       if (!cancelled) {
-        setMessages((prev) => [...prev.slice(-49), msg]);
+        setMessages((prev) => {
+          const exists = prev.some((m) => m.id === msg.id);
+          if (exists) return prev;
+          return [...prev.slice(-49), msg];
+        });
       }
     });
 
@@ -53,29 +55,26 @@ export default function ChatWidget() {
     };
   }, [open, username]);
 
-  /* --- Auto-scroll --- */
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  /* --- Send handler with 2s rate limit --- */
   const handleSend = useCallback(async () => {
     if (!username || !draft.trim() || sending) return;
     const now = Date.now();
     if (now - lastSent < 2000) return;
 
+    const text = draft.trim();
+    setDraft("");
+    setLastSent(now);
     setSending(true);
-    const ok = await sendMessage(username, draft);
-    if (ok) {
-      setDraft("");
-      setLastSent(Date.now());
-    }
+
+    await sendMessage(username, text);
     setSending(false);
   }, [username, draft, sending, lastSent]);
 
   return (
     <>
-      {/* Toggle button */}
       <button
         onClick={() => setOpen((o) => !o)}
         aria-label={open ? "Close chat" : "Open chat"}
@@ -103,13 +102,11 @@ export default function ChatWidget() {
                 Global Chat
               </span>
               {username && (
-                <span className="text-xs text-neutral-400">{username}</span>
+                <span className="chat-rainbow text-xs font-semibold">{username}</span>
               )}
             </div>
 
-            {/* Body */}
             {!username ? (
-              /* Username prompt */
               <div className="flex flex-1 flex-col items-center justify-center gap-4 p-6">
                 <p className="text-center text-sm text-neutral-600 dark:text-neutral-400">
                   Pick a username or get a random one.
@@ -137,7 +134,6 @@ export default function ChatWidget() {
                 </div>
               </div>
             ) : (
-              /* Messages */
               <>
                 <div className="flex-1 overflow-y-auto px-4 py-3">
                   {messages.length === 0 && (
@@ -148,7 +144,7 @@ export default function ChatWidget() {
                   {messages.map((m) => (
                     <div key={m.id} className="mb-3">
                       <div className="flex items-baseline gap-2">
-                        <span className="text-xs font-semibold text-primary-600 dark:text-primary-400">
+                        <span className="chat-rainbow text-xs font-semibold">
                           {m.username}
                         </span>
                         <time className="text-[10px] text-neutral-400">
@@ -166,7 +162,6 @@ export default function ChatWidget() {
                   <div ref={bottomRef} />
                 </div>
 
-                {/* Input */}
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
@@ -184,7 +179,7 @@ export default function ChatWidget() {
                   />
                   <button
                     type="submit"
-                    disabled={sending || !draft.trim()}
+                    disabled={!draft.trim()}
                     aria-label="Send message"
                     className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-500 text-white
                                transition-colors hover:bg-primary-600 disabled:opacity-40"
