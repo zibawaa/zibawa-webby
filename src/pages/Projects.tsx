@@ -1,11 +1,10 @@
 import { motion } from "framer-motion";
 import ProjectsGrid from "../components/ProjectsGrid";
-import type { Project } from "../components/ProjectCard";
-import projectsData from "../content/projects.json";
-
-const projects = projectsData as Project[];
+import { useProjects } from "../hooks/useProjects";
 
 export default function Projects() {
+  const { projects } = useProjects();
+
   return (
     <section className="container-page py-12">
       <motion.div

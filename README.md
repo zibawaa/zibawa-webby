@@ -87,7 +87,15 @@ Edit `src/content/updates.json`. Each update object:
 1. Create a free project at [supabase.com](https://supabase.com).
 2. Open the **SQL Editor** and run `supabase/schema.sql`.
 3. Go to **Database → Replication** and confirm `messages` is in the `supabase_realtime` publication.
-4. Copy your project URL and anon key into `.env`.
+4. **Storage bucket for project images**: Go to **Storage → New bucket**. Create a bucket named `project-images` and enable **Public bucket**. Add policies: (a) allow `SELECT` for all users (public read); (b) allow `INSERT` for all users (so admin can upload).
+5. Copy your project URL and anon key into `.env`.
+
+## Admin Panel
+
+Log in with the Admin button (password: `zibawa2026`) to:
+
+- **Status**: Edit the "Currently Working On" items (saved globally).
+- **Projects**: Add, edit, or delete project cards. Upload images, set title, description, tags, status, GitHub/Live URLs, and featured flag.
 
 ## Building for Production
 

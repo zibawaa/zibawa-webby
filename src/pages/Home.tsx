@@ -4,21 +4,19 @@ import ProfileHeader from "../components/ProfileHeader";
 import ProjectsGrid from "../components/ProjectsGrid";
 import CurrentlyWorkingOn from "../components/CurrentlyWorkingOn";
 import AdminPanel from "../components/AdminPanel";
-import type { Project } from "../components/ProjectCard";
-import projectsData from "../content/projects.json";
-
-const featured = (projectsData as Project[]).filter((p) => p.featured);
+import { useProjects } from "../hooks/useProjects";
 
 export default function Home() {
+  const { projects } = useProjects();
+  const featured = projects.filter((p) => p.featured);
+
   return (
     <>
       <ProfileHeader />
 
-      {/* Currently Working On */}
       <CurrentlyWorkingOn />
       <AdminPanel />
 
-      {/* Featured Projects */}
       <section className="container-page pb-20">
         <div className="mb-6 flex items-center justify-between">
           <h2 className="text-xl font-bold text-neutral-900 dark:text-white">
