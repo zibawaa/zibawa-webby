@@ -48,7 +48,7 @@ export default function About() {
               BSc Computer Science
             </h3>
             <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
-              University &bull; 2020 &ndash; 2024
+              Middlesex University &bull; 2024 &ndash; Expected 2027
             </p>
           </div>
         </div>
@@ -56,7 +56,8 @@ export default function About() {
         {/* CV link */}
         <div>
           <a
-            href="#"
+            href={import.meta.env.BASE_URL + "Ali-Alnabhan-CV.pdf"}
+            download="Ali-Alnabhan-CV.pdf"
             className="inline-flex items-center gap-2 rounded-lg border border-neutral-200 bg-white px-4 py-2.5
                        text-sm font-medium text-neutral-700 shadow-sm transition-colors hover:border-primary-300
                        hover:text-primary-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300

@@ -17,7 +17,7 @@ const skills: Skill[] = [
   {
     icon: Server,
     title: "Backend",
-    items: ["Node.js", "Express", "REST APIs", "GraphQL"],
+    items: ["Node.js", "Express", "REST APIs", "GraphQL", "Python", "C++", "Bash Scripting"],
   },
   {
     icon: Database,
