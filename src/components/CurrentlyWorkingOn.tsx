@@ -3,23 +3,14 @@ import { motion } from "framer-motion";
 import { Zap } from "lucide-react";
 import { fetchStatus, type StatusItem } from "../lib/supabase";
 
-const fallbackItems: StatusItem[] = [
-  { text: "Building out this portfolio site with live chat" },
-  { text: "Polishing Trackademic for public demo" },
-];
-
 export default function CurrentlyWorkingOn() {
-  const [items, setItems] = useState<StatusItem[]>(fallbackItems);
+  const [items, setItems] = useState<StatusItem[]>([]);
 
   useEffect(() => {
-    fetchStatus().then((data) => {
-      setItems(data.length > 0 ? data : fallbackItems);
-    });
+    fetchStatus().then((data) => setItems(data));
 
     const handleRefresh = () => {
-      fetchStatus().then((data) => {
-        setItems(data.length > 0 ? data : fallbackItems);
-      });
+      fetchStatus().then((data) => setItems(data));
     };
 
     window.addEventListener("status-updated", handleRefresh);
