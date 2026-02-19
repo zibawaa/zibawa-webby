@@ -9,6 +9,38 @@ import {
   uploadProjectImage,
 } from "../lib/supabase";
 import type { DbProject } from "../lib/supabase";
+import projectsFallback from "../content/projects.json";
+
+interface JsonProject {
+  id: string;
+  title: string;
+  description: string;
+  tags: string[];
+  status: "completed" | "in-progress" | "planned";
+  githubUrl?: string;
+  liveUrl?: string;
+  image?: string;
+  featured?: boolean;
+}
+
+function toDbProject(p: JsonProject): DbProject {
+  const base = typeof window !== "undefined" ? window.location.origin : "";
+  const imageUrl = p.image?.startsWith("/")
+    ? `${base}${p.image}`
+    : p.image ?? null;
+  return {
+    id: p.id,
+    created_at: new Date().toISOString(),
+    title: p.title,
+    description: p.description,
+    tags: p.tags,
+    status: p.status,
+    github_url: p.githubUrl ?? null,
+    live_url: p.liveUrl ?? null,
+    image: imageUrl,
+    featured: p.featured ?? false,
+  };
+}
 
 const statusOptions = ["completed", "in-progress", "planned"] as const;
 
@@ -30,14 +62,21 @@ export default function AdminProjects() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [importing, setImporting] = useState(false);
 
   const load = useCallback(() => {
+    if (!supabase) return;
     fetchProjects().then(setProjects);
   }, []);
 
   useEffect(() => {
     load();
   }, [load]);
+
+  const displayProjects =
+    projects.length > 0
+      ? projects
+      : (projectsFallback as JsonProject[]).map(toDbProject);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,7 +96,9 @@ export default function AdminProjects() {
       .map((t) => t.trim())
       .filter(Boolean);
 
-    if (editing) {
+    const inSupabase = editing && projects.some((x) => x.id === editing.id);
+
+    if (editing && inSupabase) {
       const ok = await updateProject(editing.id, {
         title: form.title.trim(),
         description: form.description.trim(),
@@ -87,6 +128,7 @@ export default function AdminProjects() {
         featured: form.featured,
       });
       if (created) {
+        setEditing(null);
         setForm(emptyProject);
         setImageFile(null);
         load();
@@ -129,6 +171,30 @@ export default function AdminProjects() {
     setEditing(null);
     setForm(emptyProject);
     setImageFile(null);
+  };
+
+  const handleImport = async () => {
+    if (!supabase) return;
+    setImporting(true);
+    const json = projectsFallback as JsonProject[];
+    for (const p of json) {
+      const imageUrl = p.image?.startsWith("/")
+        ? `${window.location.origin}${p.image}`
+        : p.image ?? undefined;
+      await createProject({
+        title: p.title,
+        description: p.description,
+        tags: p.tags,
+        status: p.status,
+        github_url: p.githubUrl,
+        live_url: p.liveUrl,
+        image: imageUrl,
+        featured: p.featured ?? false,
+      });
+    }
+    setImporting(false);
+    load();
+    window.dispatchEvent(new Event("projects-updated"));
   };
 
   if (!supabase) return null;
@@ -293,11 +359,24 @@ export default function AdminProjects() {
       </form>
 
       <div>
-        <h4 className="mb-3 text-sm font-bold text-primary-700 dark:text-primary-400">
-          {projects.length} project{projects.length !== 1 ? "s" : ""}
-        </h4>
+        <div className="mb-3 flex items-center justify-between gap-2">
+          <h4 className="text-sm font-bold text-primary-700 dark:text-primary-400">
+            {displayProjects.length} project{displayProjects.length !== 1 ? "s" : ""}
+            {projects.length === 0 && " (from JSON — import to save to Supabase)"}
+          </h4>
+          {projects.length === 0 && (
+            <button
+              type="button"
+              onClick={handleImport}
+              disabled={importing}
+              className="rounded-lg bg-primary-500 px-3 py-1 text-xs font-medium text-white hover:bg-primary-600 disabled:opacity-50"
+            >
+              {importing ? "Importing…" : "Import all to Supabase"}
+            </button>
+          )}
+        </div>
         <div className="max-h-48 space-y-2 overflow-y-auto">
-          {projects.map((p) => (
+          {displayProjects.map((p) => (
             <div
               key={p.id}
               className="flex items-center justify-between gap-2 rounded-lg border border-neutral-200
@@ -324,12 +403,14 @@ export default function AdminProjects() {
                 >
                   Edit
                 </button>
-                <button
-                  onClick={() => handleDelete(p.id)}
-                  className="rounded px-2 py-1 text-xs text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30"
-                >
-                  <Trash2 size={12} />
-                </button>
+                {projects.some((x) => x.id === p.id) && (
+                  <button
+                    onClick={() => handleDelete(p.id)}
+                    className="rounded px-2 py-1 text-xs text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30"
+                  >
+                    <Trash2 size={12} />
+                  </button>
+                )}
               </div>
             </div>
           ))}
