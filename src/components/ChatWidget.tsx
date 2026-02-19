@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageCircle, X, Send } from "lucide-react";
+import { MessageCircle, X, Send, Pencil } from "lucide-react";
 import {
   fetchMessages,
   sendMessage,
@@ -13,6 +13,7 @@ export default function ChatWidget() {
   const [open, setOpen] = useState(true);
   const [username, setUsername] = useState<string | null>(null);
   const [usernameInput, setUsernameInput] = useState("");
+  const [editingUsername, setEditingUsername] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [draft, setDraft] = useState("");
   const [sending, setSending] = useState(false);
@@ -107,8 +108,68 @@ export default function ChatWidget() {
               <span className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
                 Global Chat
               </span>
-              {username && (
-                <span className="chat-rainbow text-xs font-semibold">{username}</span>
+              {username && !editingUsername && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setUsernameInput(username);
+                    setEditingUsername(true);
+                  }}
+                  className="flex items-center gap-1.5 text-xs font-semibold text-primary-600 hover:text-primary-700
+                             dark:text-primary-400 dark:hover:text-primary-300"
+                >
+                  <span className="chat-rainbow">{username}</span>
+                  <Pencil size={10} aria-label="Change username" />
+                </button>
+              )}
+              {username && editingUsername && (
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={usernameInput}
+                    onChange={(e) =>
+                      setUsernameInput(e.target.value.replace(/\s/g, "").slice(0, 24))
+                    }
+                    placeholder="username"
+                    className="w-28 rounded border border-neutral-200 px-2 py-1 text-xs outline-none
+                               focus:border-primary-400 dark:border-neutral-600 dark:bg-neutral-800 dark:focus:border-primary-500"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        const v = usernameInput.trim();
+                        if (v) {
+                          confirmUsername(v);
+                          setEditingUsername(false);
+                        }
+                      }
+                      if (e.key === "Escape") setEditingUsername(false);
+                    }}
+                    autoFocus
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const v = usernameInput.trim();
+                      if (v) {
+                        confirmUsername(v);
+                        setEditingUsername(false);
+                      }
+                    }}
+                    className="rounded bg-primary-500 px-2 py-1 text-xs font-medium text-white hover:bg-primary-600"
+                  >
+                    Save
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setUsernameInput(username);
+                      setEditingUsername(false);
+                    }}
+                    className="rounded border border-neutral-200 px-2 py-1 text-xs text-neutral-500
+                               hover:text-neutral-700 dark:border-neutral-600 dark:text-neutral-400 dark:hover:text-neutral-200"
+                  >
+                    Cancel
+                  </button>
+                </div>
               )}
             </div>
 
