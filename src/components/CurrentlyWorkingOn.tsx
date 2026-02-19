@@ -13,12 +13,12 @@ export default function CurrentlyWorkingOn() {
 
   useEffect(() => {
     fetchStatus().then((data) => {
-      if (data.length > 0) setItems(data);
+      setItems(data.length > 0 ? data : fallbackItems);
     });
 
     const handleRefresh = () => {
       fetchStatus().then((data) => {
-        if (data.length > 0) setItems(data);
+        setItems(data.length > 0 ? data : fallbackItems);
       });
     };
 
