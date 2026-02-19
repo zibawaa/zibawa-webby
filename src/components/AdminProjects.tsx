@@ -178,20 +178,43 @@ export default function AdminProjects() {
     setImporting(true);
     const json = projectsFallback as JsonProject[];
     for (const p of json) {
-      const imageUrl = p.image?.startsWith("/")
+      // Use form data if user is currently editing this JSON project
+      const isEditingThis = editing && editing.id === p.id;
+      const title = isEditingThis ? form.title.trim() : p.title;
+      const description = isEditingThis ? form.description.trim() : p.description;
+      const tags = isEditingThis
+        ? form.tags.split(",").map((t) => t.trim()).filter(Boolean)
+        : p.tags;
+      const status = isEditingThis ? form.status : p.status;
+      const githubUrl = isEditingThis ? form.githubUrl.trim() || undefined : p.githubUrl;
+      const liveUrl = isEditingThis ? form.liveUrl.trim() || undefined : p.liveUrl;
+      const featured = isEditingThis ? form.featured : (p.featured ?? false);
+
+      let imageUrl: string | undefined = p.image?.startsWith("/")
         ? `${window.location.origin}${p.image}`
         : p.image ?? undefined;
+      if (isEditingThis && (editing?.image || imageFile)) {
+        if (imageFile) {
+          imageUrl = (await uploadProjectImage(imageFile)) ?? imageUrl;
+        } else if (editing?.image) {
+          imageUrl = editing.image;
+        }
+      }
+
       await createProject({
-        title: p.title,
-        description: p.description,
-        tags: p.tags,
-        status: p.status,
-        github_url: p.githubUrl,
-        live_url: p.liveUrl,
+        title,
+        description,
+        tags,
+        status,
+        github_url: githubUrl,
+        live_url: liveUrl,
         image: imageUrl,
-        featured: p.featured ?? false,
+        featured,
       });
     }
+    setEditing(null);
+    setForm(emptyProject);
+    setImageFile(null);
     setImporting(false);
     load();
     window.dispatchEvent(new Event("projects-updated"));
