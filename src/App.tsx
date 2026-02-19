@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ErrorBoundary from "./components/ErrorBoundary";
+import InteractiveBackground from "./components/InteractiveBackground";
 
 function lazyRetry(factory: () => Promise<{ default: React.ComponentType }>) {
   return lazy(() =>
@@ -35,6 +36,7 @@ function PageLoader() {
 export default function App() {
   return (
     <div className="flex min-h-screen flex-col">
+      <InteractiveBackground />
       <Navbar />
       <main className="flex-1">
         <ErrorBoundary>

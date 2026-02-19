@@ -18,15 +18,15 @@ export default function About() {
           </h1>
           <div className="mt-4 space-y-4 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
             <p>
-              Hi, I&apos;m Ali Alnabhan &mdash; a software engineer who enjoys building practical,
-              well-crafted tools for the web. I work across the stack but gravitate toward
-              frontend engineering, full-stack applications, and developer experience.
+              Hi, I&apos;m Ali Alnabhan &mdash; a software engineer and student who enjoys building
+              practical, well-crafted tools for the web. I work across the stack but gravitate toward
+              frontend engineering, full-stack applications, and developer experience. I&apos;m
+              looking for opportunities to pave the way forward.
             </p>
             <p>
               I&apos;ve built everything from student deadline trackers to social media platforms
-              and gaming catalogs. When I&apos;m not coding, I&apos;m grinding competitive ranks or
-              appreciating Maine Coons. I believe in shipping early, iterating fast, and documenting
-              the process along the way.
+              and Zibawaman — a recreation of Pac-Man. I believe in shipping early, iterating fast,
+              and documenting the process along the way.
             </p>
           </div>
         </div>

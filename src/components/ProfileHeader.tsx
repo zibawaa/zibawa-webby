@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Github, Linkedin, Mail, Gamepad2 } from "lucide-react";
+import { Github, Linkedin, Mail } from "lucide-react";
 
 const socials = [
   { icon: Github, href: "https://github.com/zibawaa", label: "GitHub" },
@@ -44,25 +44,11 @@ export default function ProfileHeader() {
             </motion.div>
 
             <div className="space-y-3">
-              <div className="flex flex-wrap items-center justify-center gap-2 lg:justify-start">
-                <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
-                  Ali Alnabhan
-                </h1>
-                <motion.span
-                  initial={{ opacity: 0, x: -8 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.3 }}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-accent-400/50
-                             bg-accent-500/10 px-3 py-1 text-xs font-semibold text-accent-600
-                             dark:text-accent-400"
-                >
-                  <Gamepad2 size={12} />
-                  Competitive rank
-                </motion.span>
-              </div>
+              <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
+                Ali Alnabhan
+              </h1>
               <p className="max-w-xl text-lg leading-relaxed text-neutral-600 dark:text-neutral-400">
-                Software engineer building useful things on the web. Maine Coon enthusiast.
-                High-rank competitive gamer. Sharing projects, process, and progress.
+                Software engineer building useful things on the web. Sharing projects, process, and progress.
               </p>
 
               {/* Social links */}
@@ -104,7 +90,7 @@ export default function ProfileHeader() {
             </div>
             <div className="space-y-1 text-neutral-600 dark:text-neutral-400">
               <p><span className="text-accent-600 dark:text-accent-400">$</span> whoami</p>
-              <p className="text-neutral-900 dark:text-neutral-100">developer · gamer · cat person</p>
+              <p className="text-neutral-900 dark:text-neutral-100">developer · builder</p>
               <p className="pt-2"><span className="text-accent-600 dark:text-accent-400">$</span> _</p>
             </div>
           </motion.div>
