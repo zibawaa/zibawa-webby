@@ -207,7 +207,10 @@ export async function updateProject(
   }>,
 ): Promise<boolean> {
   if (!supabase) return false;
-  const { error } = await supabase.from("projects").update(project).eq("id", id);
+  const clean = Object.fromEntries(
+    Object.entries(project).filter(([, v]) => v !== undefined)
+  ) as Record<string, unknown>;
+  const { error } = await supabase.from("projects").update(clean).eq("id", id);
 
   if (error) {
     console.error("updateProject error:", error);
