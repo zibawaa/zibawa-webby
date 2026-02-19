@@ -63,10 +63,15 @@ export default function AdminProjects() {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [importing, setImporting] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const load = useCallback(() => {
     if (!supabase) return;
-    fetchProjects().then(setProjects);
+    setLoadError(null);
+    fetchProjects().then(({ data, error }) => {
+      setProjects(data);
+      if (error) setLoadError(error.message);
+    });
   }, []);
 
   useEffect(() => {
@@ -204,7 +209,7 @@ export default function AdminProjects() {
         }
       }
 
-      await createProject({
+      const created = await createProject({
         title,
         description,
         tags,
@@ -214,6 +219,10 @@ export default function AdminProjects() {
         image: imageUrl,
         featured,
       });
+      if (!created) {
+        setLoadError("Projects table not found. Run supabase/projects-table.sql in Supabase SQL Editor.");
+        break;
+      }
     }
     setEditing(null);
     setForm(emptyProject);
@@ -227,6 +236,15 @@ export default function AdminProjects() {
 
   return (
     <div className="space-y-6">
+      {loadError && (
+        <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200">
+          <strong>Projects table not found.</strong> Run{" "}
+          <code className="rounded bg-amber-100 px-1 dark:bg-amber-900/50">
+            supabase/projects-table.sql
+          </code>{" "}
+          in your Supabase Dashboard → SQL Editor, then refresh.
+        </div>
+      )}
       <form onSubmit={handleSubmit} className="space-y-4">
         <h4 className="text-sm font-bold text-primary-700 dark:text-primary-400">
           {editing ? "Edit project" : "Add project"}
