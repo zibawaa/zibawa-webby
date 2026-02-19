@@ -116,6 +116,9 @@ export default function AdminProjects() {
         load();
         window.dispatchEvent(new Event("projects-updated"));
       }
+    } else if (editing && !inSupabase) {
+      // Editing a JSON project — import all with form edits applied
+      await handleImport();
     } else {
       const created = await createProject({
         title: form.title.trim(),
