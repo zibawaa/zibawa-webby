@@ -10,7 +10,7 @@ import {
 import { generateUsername, getStoredUsername, storeUsername } from "../lib/username";
 
 export default function ChatWidget() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [username, setUsername] = useState<string | null>(null);
   const [usernameInput, setUsernameInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
@@ -59,6 +59,12 @@ export default function ChatWidget() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  useEffect(() => {
+    const handleCleared = () => setMessages([]);
+    window.addEventListener("messages-cleared", handleCleared);
+    return () => window.removeEventListener("messages-cleared", handleCleared);
+  }, []);
+
   const handleSend = useCallback(async () => {
     if (!username || !draft.trim() || sending) return;
     const now = Date.now();
@@ -79,7 +85,7 @@ export default function ChatWidget() {
         onClick={() => setOpen((o) => !o)}
         aria-label={open ? "Close chat" : "Open chat"}
         className="fixed bottom-5 right-5 z-50 flex h-12 w-12 items-center justify-center
-                   rounded-full bg-primary-500 text-white shadow-lg transition-transform
+                   rounded-full bg-primary-500 text-white shadow-lg shadow-primary-900/30 transition-transform
                    hover:scale-105 active:scale-95"
       >
         {open ? <X size={20} /> : <MessageCircle size={20} />}

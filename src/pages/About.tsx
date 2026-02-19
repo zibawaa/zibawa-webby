@@ -24,7 +24,8 @@ export default function About() {
             </p>
             <p>
               I&apos;ve built everything from student deadline trackers to social media platforms
-              and gaming catalogs. I believe in shipping early, iterating fast, and documenting
+              and gaming catalogs. When I&apos;m not coding, I&apos;m grinding competitive ranks or
+              appreciating Maine Coons. I believe in shipping early, iterating fast, and documenting
               the process along the way.
             </p>
           </div>

@@ -53,6 +53,19 @@ export async function sendMessage(
 }
 
 /**
+ * Delete all messages (admin only). Requires delete policy on messages table.
+ */
+export async function clearAllMessages(): Promise<boolean> {
+  if (!supabase) return false;
+  const { error } = await supabase.from("messages").delete().gte("created_at", "1970-01-01");
+  if (error) {
+    console.error("clearAllMessages error:", error);
+    return false;
+  }
+  return true;
+}
+
+/**
  * Subscribe to new message inserts via Supabase Realtime.
  */
 export function subscribeMessages(
