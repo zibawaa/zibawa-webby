@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Lock, LogOut, Plus, Trash2, Save, Loader2, FolderOpen } from "lucide-react";
-import { fetchStatus, saveStatus, supabase, type StatusItem } from "../lib/supabase";
+import { Lock, LogOut, Plus, Trash2, Save, Loader2, FolderOpen, MessageSquare } from "lucide-react";
+import { fetchStatus, saveStatus, supabase, clearAllMessages, type StatusItem } from "../lib/supabase";
 import AdminProjects from "./AdminProjects";
 
 const ADMIN_KEY = "zibawa-admin-auth";
@@ -15,7 +15,8 @@ export default function AdminPanel() {
   const [items, setItems] = useState<StatusItem[]>([]);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [tab, setTab] = useState<"status" | "projects">("status");
+  const [tab, setTab] = useState<"status" | "projects" | "chat">("status");
+  const [clearing, setClearing] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem(ADMIN_KEY);
@@ -155,9 +156,21 @@ export default function AdminPanel() {
             >
               <FolderOpen size={12} /> Projects
             </button>
+            <button
+              onClick={() => setTab("chat")}
+              className={`flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+                tab === "chat"
+                  ? "bg-primary-500 text-white"
+                  : "text-neutral-500 hover:bg-neutral-200 dark:text-neutral-400 dark:hover:bg-neutral-700"
+              }`}
+            >
+              <MessageSquare size={12} /> Chat
+            </button>
           </div>
           <h3 className="text-sm font-bold text-primary-700 dark:text-primary-400">
-            {tab === "status" ? "Edit \"Currently Working On\"" : "Add / Edit Projects"}
+            {tab === "status" && "Edit \"Currently Working On\""}
+            {tab === "projects" && "Add / Edit Projects"}
+            {tab === "chat" && "Chat"}
           </h3>
           <div className="flex items-center gap-2">
             {saved && (
@@ -218,6 +231,34 @@ export default function AdminPanel() {
               </button>
             </div>
           </>
+        ) : tab === "chat" ? (
+          <div className="space-y-4">
+            <p className="text-sm text-neutral-600 dark:text-neutral-400">
+              Permanently delete all messages from the global chat.
+            </p>
+            <button
+              onClick={async () => {
+                if (!confirm("Clear ALL chat messages? This cannot be undone.")) return;
+                setClearing(true);
+                const ok = await clearAllMessages();
+                setClearing(false);
+                if (ok) {
+                  window.dispatchEvent(new Event("messages-cleared"));
+                  setSaved(true);
+                  setTimeout(() => setSaved(false), 2000);
+                } else {
+                  setError("Failed — ensure messages delete policy exists in Supabase");
+                  setTimeout(() => setError(""), 4000);
+                }
+              }}
+              disabled={clearing}
+              className="inline-flex items-center gap-2 rounded-lg bg-red-500 px-4 py-2 text-sm font-medium
+                         text-white hover:bg-red-600 disabled:opacity-50"
+            >
+              {clearing ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+              {clearing ? "Clearing…" : "Clear all messages"}
+            </button>
+          </div>
         ) : (
           <AdminProjects />
         )}

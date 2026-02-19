@@ -32,7 +32,7 @@ export default function Navbar() {
             alt=""
             className="h-7 w-7 rounded-full"
           />
-          Ali<span className="text-primary-500">.</span>
+          Ali<span className="text-primary-500 dark:text-primary-400">.</span>
         </NavLink>
 
         {/* Desktop */}

@@ -19,6 +19,9 @@ create policy "Anyone can read messages"
 create policy "Anyone can insert messages"
   on public.messages for insert with check (true);
 
+create policy "Anyone can delete messages"
+  on public.messages for delete using (true);
+
 alter publication supabase_realtime add table public.messages;
 
 create index if not exists messages_created_at_idx
