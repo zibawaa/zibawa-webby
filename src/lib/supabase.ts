@@ -139,9 +139,13 @@ const BUCKET = "project-images";
 
 /**
  * Fetch all projects from Supabase.
+ * Returns { data, error }. Use error to show user-facing message (e.g. table missing).
  */
-export async function fetchProjects(): Promise<DbProject[]> {
-  if (!supabase) return [];
+export async function fetchProjects(): Promise<{
+  data: DbProject[];
+  error: { message: string; code?: string } | null;
+}> {
+  if (!supabase) return { data: [], error: null };
   const { data, error } = await supabase
     .from("projects")
     .select("*")
@@ -149,9 +153,12 @@ export async function fetchProjects(): Promise<DbProject[]> {
 
   if (error) {
     console.error("fetchProjects error:", error);
-    return [];
+    return {
+      data: [],
+      error: { message: error.message, code: error.code },
+    };
   }
-  return (data ?? []) as DbProject[];
+  return { data: (data ?? []) as DbProject[], error: null };
 }
 
 /**

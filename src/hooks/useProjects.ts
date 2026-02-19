@@ -40,7 +40,7 @@ export function useProjects() {
     }
 
     fetchProjects()
-      .then((data) => {
+      .then(({ data }) => {
         if (data.length > 0) {
           setProjects(data.map(dbToProject));
         }
@@ -48,7 +48,7 @@ export function useProjects() {
       .finally(() => setLoading(false));
 
     const handleRefresh = () => {
-      fetchProjects().then((data) => {
+      fetchProjects().then(({ data }) => {
         if (data.length > 0) setProjects(data.map(dbToProject));
       });
     };
