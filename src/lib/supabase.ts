@@ -117,3 +117,138 @@ export async function saveStatus(items: StatusItem[]): Promise<boolean> {
   }
   return true;
 }
+
+/* ========================================================== */
+/*  PROJECTS  (admin-managed project cards)                   */
+/* ========================================================== */
+
+export interface DbProject {
+  id: string;
+  created_at: string;
+  title: string;
+  description: string;
+  tags: string[];
+  status: "completed" | "in-progress" | "planned";
+  github_url: string | null;
+  live_url: string | null;
+  image: string | null;
+  featured: boolean;
+}
+
+const BUCKET = "project-images";
+
+/**
+ * Fetch all projects from Supabase.
+ */
+export async function fetchProjects(): Promise<DbProject[]> {
+  if (!supabase) return [];
+  const { data, error } = await supabase
+    .from("projects")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("fetchProjects error:", error);
+    return [];
+  }
+  return (data ?? []) as DbProject[];
+}
+
+/**
+ * Create a new project.
+ */
+export async function createProject(project: {
+  title: string;
+  description: string;
+  tags: string[];
+  status: "completed" | "in-progress" | "planned";
+  github_url?: string;
+  live_url?: string;
+  image?: string;
+  featured?: boolean;
+}): Promise<DbProject | null> {
+  if (!supabase) return null;
+  const { data, error } = await supabase
+    .from("projects")
+    .insert({
+      title: project.title,
+      description: project.description,
+      tags: project.tags,
+      status: project.status,
+      github_url: project.github_url || null,
+      live_url: project.live_url || null,
+      image: project.image || null,
+      featured: project.featured ?? false,
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error("createProject error:", error);
+    return null;
+  }
+  return data as DbProject;
+}
+
+/**
+ * Update an existing project.
+ */
+export async function updateProject(
+  id: string,
+  project: Partial<{
+    title: string;
+    description: string;
+    tags: string[];
+    status: "completed" | "in-progress" | "planned";
+    github_url: string;
+    live_url: string;
+    image: string;
+    featured: boolean;
+  }>,
+): Promise<boolean> {
+  if (!supabase) return false;
+  const { error } = await supabase.from("projects").update(project).eq("id", id);
+
+  if (error) {
+    console.error("updateProject error:", error);
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Delete a project.
+ */
+export async function deleteProject(id: string): Promise<boolean> {
+  if (!supabase) return false;
+  const { error } = await supabase.from("projects").delete().eq("id", id);
+
+  if (error) {
+    console.error("deleteProject error:", error);
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Upload a project image to Supabase Storage. Returns the public URL.
+ */
+export async function uploadProjectImage(file: File): Promise<string | null> {
+  if (!supabase) return null;
+
+  const ext = file.name.split(".").pop() || "png";
+  const path = `${crypto.randomUUID()}.${ext}`;
+
+  const { error } = await supabase.storage.from(BUCKET).upload(path, file, {
+    cacheControl: "3600",
+    upsert: false,
+  });
+
+  if (error) {
+    console.error("uploadProjectImage error:", error);
+    return null;
+  }
+
+  const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
+  return data.publicUrl;
+}

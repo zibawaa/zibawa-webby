@@ -51,3 +51,45 @@ create policy "Anyone can insert status"
 insert into public.status (id, items)
 values (1, '[{"text":"Building out this portfolio site with live chat"},{"text":"Polishing Trackademic for public demo"}]')
 on conflict (id) do nothing;
+
+-- ============================================================
+-- 3. PROJECTS TABLE (admin-managed project cards)
+-- ============================================================
+create table if not exists public.projects (
+  id          uuid primary key default gen_random_uuid(),
+  created_at  timestamptz not null default now(),
+  title       text not null,
+  description text not null,
+  tags        text[] not null default '{}',
+  status      text not null check (status in ('completed','in-progress','planned')),
+  github_url  text,
+  live_url   text,
+  image       text,
+  featured    boolean not null default false
+);
+
+alter table public.projects enable row level security;
+
+create policy "Anyone can read projects"
+  on public.projects for select using (true);
+
+create policy "Anyone can insert projects"
+  on public.projects for insert with check (true);
+
+create policy "Anyone can update projects"
+  on public.projects for update using (true);
+
+create policy "Anyone can delete projects"
+  on public.projects for delete using (true);
+
+-- ============================================================
+-- 4. STORAGE BUCKET (project images)
+-- ============================================================
+-- Create via Supabase Dashboard: Storage > New bucket
+--   Name: project-images
+--   Public bucket: ON (so images are publicly accessible)
+-- Add policy: Storage > project-images > Policies > New policy
+--   Policy name: Public read
+--   Allowed operation: SELECT (read)
+--   Target: All users
+--   USING expression: true
