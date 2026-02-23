@@ -38,8 +38,8 @@ export default function CurrentlyWorkingOn() {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-primary-200/80 bg-gradient-to-br from-primary-50/80 to-primary-100/30 p-6
-                     dark:border-primary-800/60 dark:from-primary-950/40 dark:to-primary-900/20">
+      <div className="electric-border rounded-2xl border border-primary-200/80 bg-gradient-to-br from-primary-50/80
+                     to-primary-100/30 p-6 dark:border-primary-800/60 dark:from-primary-950/40 dark:to-primary-900/20">
         <ul className="space-y-3">
           {items.map((item, i) => (
             <li key={i} className="flex items-start gap-3">

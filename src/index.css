@@ -75,3 +75,37 @@
   0% { background-position: 0% center; }
   100% { background-position: 200% center; }
 }
+
+/* Electric border - animated gradient ring (React Bits style) */
+.electric-border {
+  position: relative;
+  isolation: isolate;
+}
+
+.electric-border::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  padding: 2px;
+  background: linear-gradient(
+    90deg,
+    #d99a6a,
+    #22d3ee,
+    #c97d4a,
+    #06b6d4,
+    #d99a6a
+  );
+  background-size: 200% 100%;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: electric-flow 4s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes electric-flow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}

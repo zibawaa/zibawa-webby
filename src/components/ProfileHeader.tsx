@@ -65,7 +65,7 @@ export default function ProfileHeader() {
                     transition={{ delay: 0.4 + i * 0.05 }}
                     className="flex h-11 w-11 items-center justify-center rounded-xl border border-neutral-200
                                text-neutral-500 transition-all hover:border-primary-400 hover:text-primary-600
-                               hover:scale-105 dark:border-neutral-700 dark:text-neutral-400
+                               dark:border-neutral-700 dark:text-neutral-400
                                dark:hover:border-primary-500 dark:hover:text-primary-400"
                   >
                     <s.icon size={20} />
@@ -80,8 +80,7 @@ export default function ProfileHeader() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.25, duration: 0.5 }}
-            className="hidden w-full max-w-xs shrink-0 rounded-xl border border-neutral-200 bg-neutral-50/80
-                       p-4 font-mono text-sm shadow-lg dark:border-neutral-700 dark:bg-neutral-900/80 lg:block"
+            className="hidden w-full max-w-xs shrink-0 lg:block electric-border rounded-xl border border-neutral-200 bg-neutral-50/80 p-4 font-mono text-sm shadow-lg dark:border-neutral-700 dark:bg-neutral-900/80"
           >
             <div className="mb-3 flex gap-2">
               <span className="h-2.5 w-2.5 rounded-full bg-red-400" />

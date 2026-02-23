@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, X, Send, Pencil } from "lucide-react";
+import Magnet from "./animations/Magnet";
 import {
   fetchMessages,
   sendMessage,
@@ -82,15 +83,16 @@ export default function ChatWidget() {
 
   return (
     <>
-      <button
-        onClick={() => setOpen((o) => !o)}
-        aria-label={open ? "Close chat" : "Open chat"}
-        className="fixed bottom-5 right-5 z-50 flex h-12 w-12 items-center justify-center
-                   rounded-full bg-primary-500 text-white shadow-lg shadow-primary-900/30 transition-transform
-                   hover:scale-105 active:scale-95"
-      >
-        {open ? <X size={20} /> : <MessageCircle size={20} />}
-      </button>
+      <Magnet padding={80} magnetStrength={5} wrapperClassName="fixed bottom-5 right-5 z-50">
+        <button
+          onClick={() => setOpen((o) => !o)}
+          aria-label={open ? "Close chat" : "Open chat"}
+          className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-500 text-white
+                     shadow-lg shadow-primary-900/30 transition-transform hover:scale-105 active:scale-95"
+        >
+          {open ? <X size={20} /> : <MessageCircle size={20} />}
+        </button>
+      </Magnet>
 
       <AnimatePresence>
         {open && (
