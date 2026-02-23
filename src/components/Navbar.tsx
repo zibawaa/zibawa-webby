@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import ThemeToggle from "./ThemeToggle";
+import Magnet from "./animations/Magnet";
 
 const links = [
   { to: "/", label: "Home" },
@@ -23,24 +24,28 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-40 border-b border-neutral-200 bg-white/80 backdrop-blur dark:border-neutral-800 dark:bg-neutral-950/80">
       <nav className="container-page flex h-14 items-center justify-between">
-        <NavLink
-          to="/"
-          className="flex items-center gap-2 text-lg font-bold tracking-tight text-neutral-900 dark:text-white"
-        >
-          <img
-            src={import.meta.env.BASE_URL + "avatar.png"}
-            alt=""
-            className="h-7 w-7 rounded-full"
-          />
-          Ali<span className="text-primary-500 dark:text-primary-400">.</span>
-        </NavLink>
+        <Magnet padding={50} magnetStrength={6}>
+          <NavLink
+            to="/"
+            className="flex items-center gap-2 text-lg font-bold tracking-tight text-neutral-900 dark:text-white"
+          >
+            <img
+              src={import.meta.env.BASE_URL + "avatar.png"}
+              alt=""
+              className="h-7 w-7 rounded-full"
+            />
+            Ali<span className="text-primary-500 dark:text-primary-400">.</span>
+          </NavLink>
+        </Magnet>
 
         {/* Desktop */}
         <div className="hidden items-center gap-6 md:flex">
           {links.map((l) => (
-            <NavLink key={l.to} to={l.to} className={linkClass} end={l.to === "/"}>
-              {l.label}
-            </NavLink>
+            <Magnet key={l.to} padding={40} magnetStrength={8}>
+              <NavLink to={l.to} className={linkClass} end={l.to === "/"}>
+                {l.label}
+              </NavLink>
+            </Magnet>
           ))}
           <ThemeToggle />
         </div>

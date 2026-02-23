@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { ExternalLink, Github, Image as ImageIcon } from "lucide-react";
+import Magnet from "./animations/Magnet";
 
 export interface Project {
   id: string;
@@ -23,18 +24,19 @@ export default function ProjectCard({ project }: { project: Project }) {
   const href = project.liveUrl || project.githubUrl || "#";
 
   return (
-    <motion.a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      initial={{ opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.35 }}
-      className="group flex flex-col overflow-hidden rounded-xl border border-neutral-200
-                 bg-white shadow-sm transition-all hover:shadow-md hover:-translate-y-1
-                 dark:border-neutral-800 dark:bg-neutral-900"
-    >
+    <Magnet padding={100} magnetStrength={8} wrapperClassName="block">
+      <motion.a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.35 }}
+        className="group flex flex-col overflow-hidden rounded-xl border border-neutral-200
+                   bg-white shadow-sm transition-all hover:shadow-md hover:-translate-y-1
+                   dark:border-neutral-800 dark:bg-neutral-900"
+      >
       {/* Image */}
       <div className="flex h-40 items-center justify-center overflow-hidden bg-neutral-100 dark:bg-neutral-800">
         {project.image ? (
@@ -92,5 +94,6 @@ export default function ProjectCard({ project }: { project: Project }) {
         </div>
       </div>
     </motion.a>
+    </Magnet>
   );
 }
