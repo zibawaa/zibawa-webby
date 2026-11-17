@@ -13,16 +13,12 @@ create table if not exists public.messages (
 
 alter table public.messages enable row level security;
 
-create policy "Anyone can read messages"
-  on public.messages for select using (true);
-
-create policy "Anyone can insert messages"
-  on public.messages for insert with check (true);
-
-create policy "Anyone can delete messages"
-  on public.messages for delete using (true);
-
-alter publication supabase_realtime add table public.messages;
+do $$ begin
+  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime'
+    and schemaname = 'public' and tablename = 'messages') then
+    alter publication supabase_realtime add table public.messages;
+  end if;
+end $$;
 
 create index if not exists messages_created_at_idx
   on public.messages (created_at desc);
@@ -38,17 +34,7 @@ create table if not exists public.status (
 
 alter table public.status enable row level security;
 
--- Anyone can read
-create policy "Anyone can read status"
-  on public.status for select using (true);
-
--- Anyone can update (admin password checked client-side)
-create policy "Anyone can update status"
-  on public.status for update using (true);
-
--- Anyone can insert (for the initial seed row)
-create policy "Anyone can insert status"
-  on public.status for insert with check (true);
+-- Writes are granted by the hardening migration only.
 
 -- Seed the single row
 insert into public.status (id, items)
@@ -73,26 +59,5 @@ create table if not exists public.projects (
 
 alter table public.projects enable row level security;
 
-create policy "Anyone can read projects"
-  on public.projects for select using (true);
-
-create policy "Anyone can insert projects"
-  on public.projects for insert with check (true);
-
-create policy "Anyone can update projects"
-  on public.projects for update using (true);
-
-create policy "Anyone can delete projects"
-  on public.projects for delete using (true);
-
--- ============================================================
--- 4. STORAGE BUCKET (project images)
--- ============================================================
--- Create via Supabase Dashboard: Storage > New bucket
---   Name: project-images
---   Public bucket: ON (so images are publicly accessible)
--- Add policy: Storage > project-images > Policies > New policy
---   Policy name: Public read
---   Allowed operation: SELECT (read)
---   Target: All users
---   USING expression: true
+-- Next run migrations/20261117_secure_admin.sql before exposing the API.
+-- Public images remain readable; uploads require an authorised admin.
