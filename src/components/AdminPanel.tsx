@@ -1,15 +1,16 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Lock, LogOut, Plus, Trash2, Save, Loader2, FolderOpen, MessageSquare } from "lucide-react";
 import { fetchStatus, saveStatus, supabase, clearAllMessages, type StatusItem } from "../lib/supabase";
 import AdminProjects from "./AdminProjects";
 
-const ADMIN_KEY = "zibawa-admin-auth";
-const ADMIN_PASS = "zibawa2026";
 
 export default function AdminPanel() {
   const [authed, setAuthed] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
+  const [email, setEmail] = useState("");
+  const [loggingIn, setLoggingIn] = useState(false);
+  const loginAttempt = useRef(0);
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [items, setItems] = useState<StatusItem[]>([]);
@@ -19,28 +20,70 @@ export default function AdminPanel() {
   const [clearing, setClearing] = useState(false);
 
   useEffect(() => {
-    const stored = localStorage.getItem(ADMIN_KEY);
-    if (stored === "true") {
-      setAuthed(true);
-      fetchStatus().then((data) => setItems(data));
-    }
+    const client = supabase;
+    if (!client) return;
+    let alive = true;
+    let generation = 0;
+    let previousUser: string | null = null;
+    const refresh = async () => {
+      const current = ++generation;
+      const { data: { session } } = await client.auth.getSession();
+      const { data, error } = session
+        ? await client.rpc("is_portfolio_admin")
+        : { data: false, error: null };
+      if (!alive || current !== generation) return;
+      const allowed = !error && data === true;
+      setAuthed(allowed);
+      if (!allowed) { previousUser = null; setItems([]); return; }
+      if (previousUser === session?.user.id) return;
+      previousUser = session?.user.id ?? null;
+      const status = await fetchStatus();
+      if (alive && current === generation) setItems(status);
+    };
+    // Legacy browser flags are never treated as authentication.
+    localStorage.removeItem("zibawa-admin-auth");
+    void refresh();
+    const { data: { subscription } } = client.auth.onAuthStateChange((_event, session) => {
+      // Do not await Supabase calls inside the auth callback (auth lock).
+      ++generation;
+      if (!session || session.user.id !== previousUser) {
+        previousUser = null;
+        setAuthed(false);
+        setItems([]);
+      }
+      window.setTimeout(() => { if (alive) void refresh(); }, 0);
+    });
+    return () => { alive = false; ++generation; subscription.unsubscribe(); };
   }, []);
 
-  const handleLogin = () => {
-    if (password === ADMIN_PASS) {
-      localStorage.setItem(ADMIN_KEY, "true");
-      setAuthed(true);
-      fetchStatus().then((data) => setItems(data));
+  const handleLogin = async () => {
+    if (!supabase || loggingIn) return;
+    const attempt = ++loginAttempt.current;
+    setLoggingIn(true);
+    setError("");
+    try {
+      const { error: loginError } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+      if (attempt !== loginAttempt.current) { await supabase.auth.signOut(); return; }
+      if (loginError) { setError("Unable to sign in. Check your email and password."); return; }
+      const { data, error: permissionError } = await supabase.rpc("is_portfolio_admin");
+      if (permissionError || data !== true) {
+        await supabase.auth.signOut();
+        setError("This account does not have portfolio admin access.");
+        return;
+      }
       setShowLogin(false);
+    } catch {
+      setError("Unable to sign in. Please try again.");
+    } finally {
       setPassword("");
-      setError("");
-    } else {
-      setError("Wrong password");
+      setLoggingIn(false);
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem(ADMIN_KEY);
+  const handleLogout = async () => {
+    if (!supabase) return;
+    const { error: logoutError } = await supabase.auth.signOut();
+    if (logoutError) { setError("Sign out failed. Please try again."); return; }
     setAuthed(false);
     setItems([]);
   };
@@ -95,9 +138,22 @@ export default function AdminPanel() {
             animate={{ opacity: 1, y: 0 }}
             className="max-w-xs"
           >
-            <div className="flex gap-2">
+            <div className="flex flex-col gap-2">
+              <input
+                type="email"
+                aria-label="Admin email"
+                autoComplete="username"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email"
+                disabled={loggingIn}
+                className="rounded-lg border border-neutral-200 px-3 py-1.5 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+              />
               <input
                 type="password"
+                aria-label="Admin password"
+                autoComplete="current-password"
+                disabled={loggingIn}
                 value={password}
                 onChange={(e) => { setPassword(e.target.value); setError(""); }}
                 onKeyDown={(e) => e.key === "Enter" && handleLogin()}
@@ -108,12 +164,14 @@ export default function AdminPanel() {
               />
               <button
                 onClick={handleLogin}
+                disabled={loggingIn || !email.trim() || !password}
                 className="rounded-lg bg-primary-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-primary-600"
               >
-                Login
+                {loggingIn ? "Signing in…" : "Login"}
               </button>
               <button
-                onClick={() => { setShowLogin(false); setPassword(""); setError(""); }}
+                disabled={loggingIn}
+                onClick={() => { ++loginAttempt.current; setShowLogin(false); setPassword(""); setError(""); }}
                 className="rounded-lg border border-neutral-200 px-2 py-1.5 text-sm text-neutral-500 hover:text-neutral-700
                            dark:border-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
               >
@@ -247,7 +305,7 @@ export default function AdminPanel() {
                   setSaved(true);
                   setTimeout(() => setSaved(false), 2000);
                 } else {
-                  setError("Failed — ensure messages delete policy exists in Supabase");
+                  setError("Unable to clear messages. Check your admin access and connection.");
                   setTimeout(() => setError(""), 4000);
                 }
               }}

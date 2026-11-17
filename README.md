@@ -87,15 +87,34 @@ Edit `src/content/updates.json`. Each update object:
 1. Create a free project at [supabase.com](https://supabase.com).
 2. Open the **SQL Editor** and run `supabase/schema.sql`.
 3. Go to **Database → Replication** and confirm `messages` is in the `supabase_realtime` publication.
-4. **Storage bucket for project images**: Go to **Storage → New bucket**. Create a bucket named `project-images` and enable **Public bucket**. Add policies: (a) allow `SELECT` for all users (public read); (b) allow `INSERT` for all users (so admin can upload).
-5. Copy your project URL and anon key into `.env`.
+4. Run `supabase/migrations/20261117_secure_admin.sql` using the SQL Editor before exposing the database API.
+5. Create the `project-images` bucket if needed (public read is fine). Do **not** add public write policies.
+6. Copy only the project URL and **anon/publishable** key into `.env`. Never use a service-role key in `VITE_*` variables.
 
-## Admin Panel
+## Admin access and security rollout
 
-Log in with the Admin button (password: `zibawa2026`) to:
+The old shared browser password has been removed. Supabase Auth verifies the email/password; database RLS, not the UI, enforces access. A normal signed-in user is **not** an admin.
 
-- **Status**: Edit the "Currently Working On" items (saved globally).
-- **Projects**: Add, edit, or delete project cards. Upload images, set title, description, tags, status, GitHub/Live URLs, and featured flag.
+For an existing deployment:
+
+1. Back up the database and inspect existing data/policies for unexpected changes. This patch does not establish whether an incident occurred.
+2. Apply `supabase/migrations/20261117_secure_admin.sql` to the correct Supabase project with the SQL Editor as database owner. It keeps existing rows, blocks public admin writes/deletes and guards image uploads. It can be rerun.
+3. Create or identify your own verified Supabase Auth user through the dashboard. Set a new unique password there; never commit it or paste it into source code. If the previously exposed password was used anywhere else, change it there too.
+4. In the SQL Editor, explicitly grant only that verified user's UUID:
+
+   ```sql
+   insert into private.portfolio_admins (user_id)
+   values ('REPLACE_WITH_VERIFIED_AUTH_USER_UUID'::uuid)
+   on conflict do nothing;
+   ```
+
+   To revoke access, delete that UUID from this private table. The database checks the allowlist on each request, so browser flags and ordinary user metadata cannot grant privileges.
+5. Deploy the frontend fix and sign in using the Admin button with that account's email and password.
+6. Validate anonymous and non-admin accounts cannot mutate projects/status, clear messages, or upload project images; validate the approved admin can. Use disposable staging data first. Check the currently deployed policies, not merely this repository.
+
+**Merging/deploying frontend code does not apply SQL to the live database.** Until step 2 is complete, existing unsafe policies remain active. Do not claim the live site is secure from a code-only deployment.
+
+Public chat remains anonymous by design and is subject to database-enforced size/timestamp bounds, but this is **not** an anti-spam rate limiter. Add a server/Edge Function with rate limiting and bot protection before exposing chat to untrusted high-volume traffic. Historical Git commits retain the removed password; it must be treated as permanently compromised, not reused.
 
 ## Building for Production
 
