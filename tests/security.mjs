@@ -31,6 +31,8 @@ await db.exec(migration);
 await db.exec(migration); // Idempotent.
 await db.exec(`insert into private.portfolio_admins values ('${admin}');`);
 let assertions = 0;
+assert.equal((await db.query("select prosecdef from pg_proc where oid='public.is_portfolio_admin()'::regprocedure")).rows[0].prosecdef, false); assertions++;
+assert.equal((await db.query("select prosecdef from pg_proc where oid='private.is_portfolio_admin()'::regprocedure")).rows[0].prosecdef, true); assertions++;
 async function role(name, id = '') {
   await db.exec(`reset role; set request.jwt.claim.sub = '${id}'; set role ${name};`);
 }
@@ -55,6 +57,7 @@ await rejects(insertProject);
 await empty("update public.status set items='[]' returning *");
 await empty('delete from public.messages returning *');
 await rejects('insert into private.portfolio_admins values (auth.uid())');
+await rejects('select * from private.portfolio_admins');
 await rejects("insert into storage.objects(bucket_id,name) values ('project-images','bad.png')");
 await role('authenticated', admin);
 assert.equal((await db.query('select public.is_portfolio_admin() as admin')).rows[0].admin, true); assertions++;
